@@ -37,7 +37,48 @@ function* createHotelSaga(
   }
 }
 
+function* getHotelByIdSaga(action: actionTypes.GetHotelByIdAction): Generator<any, any, any> {
+  try {
+    const response = yield call(axios.get, `${process.env.REACT_APP_API_URL}/${action.payload}`);
+    yield put(actions.getHotelSuccess(response.data));
+  } catch (error: any) {
+    yield put(actions.getHotelFailure(error.message));
+  }
+}
+
+function* updateHotelSaga(action: actionTypes.UpdateHotelAction): Generator<any, any, any> {
+  try {
+    const response = yield call(axios.put, `${process.env.REACT_APP_API_URL}/hotels/${action.payload.id}`, action.payload);
+    yield put(actions.updateHotelSuccess(response.data));
+  } catch (error: any) {
+    yield put(actions.updateHotelFailure(error.message));
+  }
+}
+
+function* deleteHotelSaga(action: actionTypes.DeleteHotelAction): Generator<any, any, any>  {
+  try {
+    yield call(axios.delete, `${process.env.REACT_APP_API_URL}/hotels/${action.payload}`);
+    yield put(actions.deleteHotelSuccess());
+  } catch (error: any) {
+    yield put(actions.deleteHotelFailure(error.message));
+  }
+}
+
+function* searchHotelsSaga(action: actionTypes.SearchHotelsAction): Generator<any, any, any>  {
+  try {
+    const response = yield call(axios.get, `${process.env.REACT_APP_API_URL}/hotels/search?q=${action.payload}`);
+    yield put(actions.searchHotelsSuccess(response.data));
+  } catch (error: any) {
+    yield put(actions.searchHotelsFailure(error.message));
+  }
+}
+
 export default function* rootSaga() {
   yield takeEvery(actionTypes.FETCH_HOTELS, fetchHotelsSaga);
   yield takeEvery(actionTypes.CREATE_HOTEL, createHotelSaga);
+  yield takeEvery(actionTypes.FETCH_HOTELS, fetchHotelsSaga);
+  yield takeEvery(actionTypes.GET_HOTEL_BY_ID, getHotelByIdSaga);
+  yield takeEvery(actionTypes.UPDATE_HOTEL, updateHotelSaga);
+  yield takeEvery(actionTypes.DELETE_HOTEL, deleteHotelSaga);
+  yield takeEvery(actionTypes.SEARCH_HOTELS, searchHotelsSaga);
 }
